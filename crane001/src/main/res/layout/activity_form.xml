@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools" android:id="@+id/activity_form"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.hdmes.crane001.FormActivity">
+    <TextView
+        android:text="@string/tView_welcome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textSize="50px"
+        android:textColor="#ff00ff"
+        android:gravity="center_horizontal"
+        android:id="@+id/tView_welcome"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentEnd="true" />
+
+    <TextView
+        android:text="当前客户:"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/username"
+        android:layout_alignBottom="@+id/tView_welcome"
+        android:layout_alignParentTop="true" />
+
+    <TextView
+        android:text="未名网络科技有限公司"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="28dp"
+        android:id="@+id/textView"
+        android:gravity="center_horizontal"
+        android:layout_below="@+id/tView_welcome"
+        android:layout_centerHorizontal="true" />
+
+    <Button
+        android:text="维权管理"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/button4"
+        android:layout_below="@+id/button2"
+        android:layout_alignStart="@+id/button3" />
+
+    <Button
+        android:text="视频监控"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/button5"
+        android:layout_below="@+id/button2"
+        android:layout_alignStart="@+id/button2" />
+
+    <Button
+        android:text="部件管理"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/button3"
+        android:layout_marginStart="20dp"
+        android:layout_above="@+id/button4"
+        android:layout_toEndOf="@+id/button5" />
+
+    <Button
+        android:text="起重机监控"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:id="@+id/button2"
+        android:layout_marginTop="56dp"
+        android:layout_marginStart="38dp"
+        android:layout_below="@+id/textView"
+        android:layout_alignParentStart="true" />
+
+</RelativeLayout>

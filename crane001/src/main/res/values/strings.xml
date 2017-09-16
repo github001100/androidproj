@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">智慧起重机</string>
+    <string name="textView_welcome">欢迎登录</string>
+    <string name="editText2_username"></string>
+    <string name="editText2_userpass"></string>
+    <string name="checkBox3">记住密码</string>
+    <string name="get_password">自动登录</string>
+    <string name="button_login">登录</string>
+    <string name="button2_cancel">注册</string>
+
+    <string name="tView_welcome">智慧起重机管理平台</string>
+</resources>
