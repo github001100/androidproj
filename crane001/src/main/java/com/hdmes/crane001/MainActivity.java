@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -101,6 +103,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * UI 线程 Main
+     *
      * @param savedInstanceState
      */
     @Override
@@ -186,13 +189,14 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 通过 web Http 获取服务器数据  到Map集合
+         *
          * @param params
          * @return
          */
         @Override
         protected Map<String, Object> doInBackground(String... params) {
 
-            String path = "http://192.168.0.188:8098/UserAccount/UserLogin_Me";
+            String path = "http://192.168.0.188:8098/UserAccount/UserLogin_Me";//本地服务器请求地址
             /*         新 URL 请求方法
             HttpURLConnection connection = null;
             try {
@@ -221,19 +225,40 @@ public class MainActivity extends AppCompatActivity {
                     connection.disconnect();
                 }
             }*/
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(path);
-            HttpPost hpost = new HttpPost(path);
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(path);
+            HttpPost httpPost = new HttpPost(path);
             BasicNameValuePair UserName = new BasicNameValuePair("UserName", strTmp);
             BasicNameValuePair UserPassword = new BasicNameValuePair("UserPassword", strTmp2);
+
+            //获取屏幕尺寸
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int width = dm.widthPixels;
+            int height = dm.heightPixels;
+            int dens = dm.densityDpi;
+            double wi = (double) width / (double) dens;
+            double hi = (double) height / (double) dens;
+            double x = Math.pow(wi, 2);
+            double y = Math.pow(hi, 2);
+            double screenInches = Math.sqrt(x + y);
+            // 设备厂商
+            String brand = Build.BRAND;
+            // 设备名称
+            String model = Build.MODEL;
+            BasicNameValuePair device_factory = new BasicNameValuePair("device_factory", brand);
+            BasicNameValuePair device_name = new BasicNameValuePair("device_name", model);
+            //POST提交参数放到List 里
             List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
             //把BasicNameValuePair放入集合中
             parameters.add(UserName);
             parameters.add(UserPassword);
-            try {
+            parameters.add(device_factory);
+            parameters.add(device_name);
+            try {//将List传到后台Web API（C# 服务器）
                 UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(parameters, "utf-8");
-                hpost.setEntity(entity1);
-                HttpResponse resp = client.execute(hpost);//请求耗时操作 网络
+                httpPost.setEntity(entity1);
+                HttpResponse resp = httpClient.execute(httpPost);//请求耗时操作 网络
                 //HttpResponse resp = client.execute(get);
                 int rp = resp.getStatusLine().getStatusCode();
                 if (resp.getStatusLine().getStatusCode() == 200) {
@@ -269,6 +294,7 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 将服务器返回的数据进行Json解析
+         *
          * @param json
          * @return
          * @throws Exception
