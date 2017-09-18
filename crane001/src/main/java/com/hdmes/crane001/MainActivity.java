@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -54,6 +55,9 @@ public class MainActivity extends AppCompatActivity {
     public boolean netStatus = false;
     public boolean wifi;
     public boolean internet;
+    //声明一个long类型变量：用于存放上一点击“返回键”的时刻
+    private long mExitTime;
+
     //消息处理机制 Handler +Message +Looper+UI线程(主线程)
     Handler mHandler = new Handler() {
         public void handleMessage(Message msg) {
@@ -73,6 +77,32 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    /**
+     * 小功能，按两次退出程序
+     */
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        //判断用户是否点击了“返回键”
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            //与上次点击返回键时刻作差
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                //大于2000ms则认为是误操作，使用Toast进行提示
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                //并记录下本次点击“返回键”的时刻，以便下次进行判断
+                mExitTime = System.currentTimeMillis();
+            } else {
+                //小于2000ms则认为是用户确实希望退出程序-调用System.exit()方法进行退出
+                System.exit(0);
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+
+    /**
+     * UI 线程 Main
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -104,24 +134,24 @@ public class MainActivity extends AppCompatActivity {
                     }
                     toast.show();
                 } else if (TextUtils.isEmpty(strTmp)) {
-                    if(toast!=null){
+                    if (toast != null) {
                         toast.cancel();
                         toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
-                    }else {
+                    } else {
                         toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
                     }
                     toast.show();
                 } else if (TextUtils.isEmpty(strTmp2)) {
-                    if(toast!=null){
+                    if (toast != null) {
                         toast.cancel();
                         toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
-                    }else {
+                    } else {
                         toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
                     }
                     toast.show();
                 } else {
                     if (internet || wifi) {
-                        netStatus=true;
+                        netStatus = true;
                         lv = (ListView) findViewById(R.id.lv);
                         pd = new ProgressDialog(MainActivity.this);
                         mAdapter = new MyAdapter(MainActivity.this, data);
@@ -142,6 +172,7 @@ public class MainActivity extends AppCompatActivity {
         //} else {
         //Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_LONG).show();
         //}
+
     }
 
     private class MyFoodTask extends AsyncTask<String, Void, Map<String, Object>> {
@@ -153,13 +184,13 @@ public class MainActivity extends AppCompatActivity {
 
         }
 
-        /*
-        *
-        * 通过 web Http 获取服务器数据
-        * */
+        /**
+         * 通过 web Http 获取服务器数据  到Map集合
+         * @param params
+         * @return
+         */
         @Override
         protected Map<String, Object> doInBackground(String... params) {
-
             String path = "http://192.168.0.188:8098/UserAccount/UserLogin_Me";
             /*         新 URL 请求方法
             HttpURLConnection connection = null;
@@ -217,9 +248,12 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
-        /*
-        * onPostExecute
-        * */
+
+        /**
+         * onPostExecute
+         *
+         * @param result
+         */
         @Override
         protected void onPostExecute(Map<String, Object> result) {
             pd.dismiss();
@@ -231,10 +265,13 @@ public class MainActivity extends AppCompatActivity {
                 new MainActivity.MyFoodTask.MyImgTask().execute(f);
             }
         }
-        /*
-        * parseJson
-        * 将服务器返回的数据进行Json解析
-        * */
+
+        /**
+         * 将服务器返回的数据进行Json解析
+         * @param json
+         * @return
+         * @throws Exception
+         */
         protected Map<String, Object> parseJson(String json) throws Exception {
 
             Map<String, Object> result = new HashMap<String, Object>();
