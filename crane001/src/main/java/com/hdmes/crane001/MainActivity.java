@@ -241,13 +241,21 @@ public class MainActivity extends AppCompatActivity {
             double hi = (double) height / (double) dens;
             double x = Math.pow(wi, 2);
             double y = Math.pow(hi, 2);
-            double screenInches = Math.sqrt(x + y);
+            //double screenInches = Math.sqrt(x + y);
+            //当前系统版本号
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;//23
+            String ver_sys = "android-" + Build.VERSION.RELEASE + "-->" + currentapiVersion;
+
             // 设备厂商
             String brand = Build.BRAND;
             // 设备名称
             String model = Build.MODEL;
             BasicNameValuePair device_factory = new BasicNameValuePair("device_factory", brand);
             BasicNameValuePair device_name = new BasicNameValuePair("device_name", model);
+            BasicNameValuePair device_wi = new BasicNameValuePair("wi", Integer.toString(width));
+            BasicNameValuePair device_hi = new BasicNameValuePair("hi", Integer.toString(height));
+            BasicNameValuePair device_dens = new BasicNameValuePair("dens", Integer.toString(dens));
+            BasicNameValuePair device_and = new BasicNameValuePair("andsys", ver_sys);
             //POST提交参数放到List 里
             List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
             //把BasicNameValuePair放入集合中
@@ -255,6 +263,11 @@ public class MainActivity extends AppCompatActivity {
             parameters.add(UserPassword);
             parameters.add(device_factory);
             parameters.add(device_name);
+            parameters.add(device_wi);
+            parameters.add(device_hi);
+            parameters.add(device_dens);
+            parameters.add(device_and);
+
             try {//将List传到后台Web API（C# 服务器）
                 UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(parameters, "utf-8");
                 httpPost.setEntity(entity1);
