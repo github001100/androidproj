@@ -15,11 +15,11 @@ import java.util.List;
 /**
  * Created by Administrator on 2017/9/11 0011.
  */
-public class MyAdapter  extends BaseAdapter {
+public class MyAdapter extends BaseAdapter {
 
     private Context context;
 
-    private List<Food> data ;
+    private List<Food> data;
 
     public MyAdapter(Context context, List<Food> data) {
         this.context = context;
@@ -46,7 +46,7 @@ public class MyAdapter  extends BaseAdapter {
 
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
-        if(convertView==null){
+        if (convertView == null) {
 
             convertView = LayoutInflater.from(context).inflate(R.layout.activity_crane, null);
 
@@ -57,16 +57,16 @@ public class MyAdapter  extends BaseAdapter {
 
         Food food = data.get(position);
 
-        if(food.getImgData()==null){
-            iv_img.setImageResource(R.drawable.bg_edittext);//cinema_1
-        }else{
-            byte [] imgData = food.getImgData();
-            Bitmap bm  = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
+        if (food.getImgData() == null) {
+            iv_img.setImageResource(R.drawable.ren);//cinema_1
+        } else {
+            byte[] imgData = food.getImgData();
+            Bitmap bm = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
             iv_img.setImageBitmap(bm);
         }
 
-        tv_name.setText( food.getName());
-        tv_desc.setText( food.getDesc());
+        tv_name.setText(food.getName());
+        tv_desc.setText(food.getDesc());
 
         return convertView;
     }

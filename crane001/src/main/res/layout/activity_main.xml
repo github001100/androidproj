@@ -81,7 +81,9 @@
         android:layout_below="@+id/checkBox3"
         android:layout_marginTop="31dp"
         android:background="@android:color/holo_green_light"
-        android:text="@string/button_login" />
+        android:text="@string/button_login"
+        android:textColor="#ba7d11b3"
+        android:textSize="18dp"/>
 
     <Button
         android:id="@+id/button2_cancel"
@@ -92,7 +94,9 @@
         android:layout_below="@+id/button_login"
         android:layout_marginTop="12dp"
         android:background="@android:color/holo_green_dark"
-        android:text="@string/button2_cancel" />
+        android:text="@string/button2_cancel"
+        android:textColor="#ba7d11b3"
+        android:textSize="18dp"/>
 
     <TextView
         android:id="@+id/textView3"

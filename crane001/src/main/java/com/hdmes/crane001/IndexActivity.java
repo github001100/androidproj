@@ -28,7 +28,7 @@ public class IndexActivity extends AppCompatActivity {
 
             }
         };
-        timer.schedule(task, 1000 * 2); //秒后
+        timer.schedule(task, 1000 * 1); //秒后
     }
 
     /***

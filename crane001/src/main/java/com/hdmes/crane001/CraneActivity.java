@@ -68,6 +68,7 @@ public class CraneActivity extends Activity {
         @Override
         protected Map<String, Object> doInBackground(String... params) {
 
+            //获取数据信息需要 参数传递 否则为NULL
             String path = "http://192.168.0.188:8088/SystemManage/Crane20D/GetGridJson1";
             HttpClient client = new DefaultHttpClient();
             HttpGet get = new HttpGet(path);
