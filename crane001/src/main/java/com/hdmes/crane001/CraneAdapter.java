@@ -13,62 +13,58 @@ import android.widget.TextView;
 import java.util.List;
 
 /**
- * Created by Administrator on 2017/9/11 0011.
+ * Created by Administrator on 2017/9/21.
  */
-public class MyAdapter extends BaseAdapter {
+
+public  class CraneAdapter  extends BaseAdapter {
 
     private Context context;
+    private List<Crane> data;
 
-    private List<Food> data;
-
-    public MyAdapter(Context context, List<Food> data) {
+    public CraneAdapter(Context context, List<Crane> data) {
         this.context = context;
         this.data = data;
     }
 
     @Override
     public int getCount() {
-        // TODO Auto-generated method stub
         return data.size();
     }
 
     @Override
     public Object getItem(int position) {
-        // TODO Auto-generated method stub
         return data.get(position);
     }
 
     @Override
     public long getItemId(int position) {
-        // TODO Auto-generated method stub
         return position;
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, ViewGroup viewGroup) {
         if (convertView == null) {
 
-            convertView = LayoutInflater.from(context).inflate(R.layout.activity_crane, null);
+            convertView = LayoutInflater.from(context).inflate(R.layout.activity_crane2, null);
 
         }
-        ImageView iv_img = (ImageView) convertView.findViewById(R.id.iv_img);
-        TextView tv_name = (TextView) convertView.findViewById(R.id.tv_name);
-        TextView tv_desc = (TextView) convertView.findViewById(R.id.tv_desc);
+        //ImageView iv_img = (ImageView) convertView.findViewById(R.id.iv_img);
+        TextView tv_name = (TextView) convertView.findViewById(R.id.tv_1);
+        TextView tv_desc = (TextView) convertView.findViewById(R.id.tv_2);
 
-        Food food = data.get(position);
+        Crane crane = data.get(position);
 
-        if (food.getImgData() == null) {
+/*        if (crane.getImgData() == null) {
             iv_img.setImageResource(R.drawable.ren);//cinema_1
         } else {
-            byte[] imgData = food.getImgData();
+            byte[] imgData = crane.getImgData();
             Bitmap bm = BitmapFactory.decodeByteArray(imgData, 0, imgData.length);
             iv_img.setImageBitmap(bm);
-        }
+        }*/
 
-        tv_name.setText(food.getName());
-        tv_desc.setText(food.getDesc());
+        tv_name.setText(crane.getEqui_Num());
+        tv_desc.setText(crane.getCraneIP());
 
         return convertView;
     }
-
 }

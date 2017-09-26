@@ -1,8 +1,8 @@
 package com.hdmes.crane001;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
+import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ListView;
@@ -24,40 +24,32 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Administrator on 2017/9/8 0008.
- */
-
-public class CraneActivity extends Activity {
+public class Crane2Activity extends AppCompatActivity {
     private ListView lv;
 
-    private List<Food> data = new ArrayList<Food>();
+    private List<Crane> data = new ArrayList<Crane>();
 
-    private MyAdapter mAdapter;
+    private CraneAdapter craneAdapter;
 
     private ProgressDialog pd;
-
-    private boolean isNextPage;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_crane);
-
+        setContentView(R.layout.activity_crane2);
         //
-        lv = (ListView) findViewById(R.id.lv);
+        //lv = (ListView) findViewById(R.id.lv2);
 
-        pd = new ProgressDialog(this);
+        //pd = new ProgressDialog(this);
 
-        mAdapter = new MyAdapter(this, data);
+        //craneAdapter = new CraneAdapter(this, data);
 
-        lv.setAdapter(mAdapter);
+        //lv.setAdapter(craneAdapter);
 
-        new MyFoodTask().execute();
+        //new MyCraneTask().execute();
 
     }
 
-    private class MyFoodTask extends AsyncTask<String, Void, Map<String, Object>> {
+    private class MyCraneTask extends AsyncTask<String, Void, Map<String, Object>> {
         @Override
         protected void onPreExecute() {
 
@@ -68,13 +60,10 @@ public class CraneActivity extends Activity {
         @Override
         protected Map<String, Object> doInBackground(String... params) {
 
-            //获取数据信息需要 参数传递 否则为NULL
-            String path = "http://192.168.0.188:8088/SystemManage/Crane20D/GetGridJson1";
+            String path = "http://192.168.0.188:8088/SystemManage/Crane/GetGridJson1";
             HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(path);
-
             HttpPost hpost = new HttpPost(path);
-            BasicNameValuePair keyvalue = new BasicNameValuePair("keyvalue", "12");
+/*            BasicNameValuePair keyvalue = new BasicNameValuePair("keyvalue", "12");
             BasicNameValuePair start_tiem = new BasicNameValuePair("start_time", "2017-01-01");
             BasicNameValuePair stop_time = new BasicNameValuePair("stop_time", "2017-12-31");
             BasicNameValuePair choice_crane = new BasicNameValuePair("choice_crane", "005A");
@@ -83,11 +72,11 @@ public class CraneActivity extends Activity {
             parameters.add(keyvalue);
             parameters.add(start_tiem);
             parameters.add(stop_time);
-            parameters.add(choice_crane);
+            parameters.add(choice_crane);*/
 
             try {
-                UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(parameters, "utf-8");
-                hpost.setEntity(entity1);
+                //UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(parameters, "utf-8");
+                //hpost.setEntity(entity1);
                 HttpResponse resp = client.execute(hpost);
                 //HttpResponse resp = client.execute(get);
                 //int rp = resp.getStatusLine().getStatusCode();
@@ -114,13 +103,12 @@ public class CraneActivity extends Activity {
         protected void onPostExecute(Map<String, Object> result) {
 
             pd.dismiss();
-            //isNextPage = (Boolean) result.get("isNextPage");
-            data.addAll((List<Food>) result.get("foodList"));
-            mAdapter.notifyDataSetChanged();
+            data.addAll((List<Crane>) result.get("craneList"));
+            craneAdapter.notifyDataSetChanged();
 
             for (int i = 0; i < data.size(); i++) {
 
-                Food f = data.get(i);
+                Crane f = data.get(i);
 
                 new MyImgTask().execute(f);
 
@@ -130,35 +118,39 @@ public class CraneActivity extends Activity {
         protected Map<String, Object> parseJson(String json) throws Exception {
 
             Map<String, Object> result = new HashMap<String, Object>();
-            List<Food> lists = new ArrayList<Food>();
+            List<Crane> lists = new ArrayList<Crane>();
             JSONArray  array = new JSONArray(json);
             //JSONObject bigObj = new JSONObject(json);
             //result.put("isNextPage", bigObj.getBoolean("isNextPage"));//
             //JSONArray array = bigObj.getJSONArray(json);
-            Food f = null;
+            Crane f = null;
 
             for (int i = 0; i < array.length(); i++) {
-                f = new Food();
+                f = new Crane();
                 JSONObject smallObj = array.getJSONObject(i);
 
-                f.setId(smallObj.getInt("fu_id"));
-                f.setName(smallObj.getString("fu_id"));
-                f.setDesc(smallObj.getString("ClientIP"));
-                f.setImgPath(smallObj.getString("fu_id"));
+                f.setFu_Id(smallObj.getString("fu_id"));
+                f.setEqui_Num(smallObj.getString("EquipmentNum"));
+                f.setCraneIP(smallObj.getString("ClientIP"));
+                f.setCraneAres(smallObj.getString("CraneArea"));
                 lists.add(f);
             }
-            result.put("foodList", lists);
+            result.put("craneList", lists);
             return result;
 
         }
 
-        private class MyImgTask extends AsyncTask<Food, Void, Food> {
+        /**
+         *
+         * 未用的
+         */
+        private class MyImgTask extends AsyncTask<Crane, Void, Crane> {
 
             @Override
-            protected Food doInBackground(Food... params) {
+            protected Crane doInBackground(Crane... params) {
 
-                Food f = params[0];
-                String imgPath = "http://192.168.0.188:8088/SystemManage/Crane20D/GetGridJson1" + f.getImgPath();
+                Crane f = params[0];
+                String imgPath = "http://192.168.0.188:8088/SystemManage/Crane20D/GetGridJson1" + f.getCranePath();
 
                 HttpClient client = new DefaultHttpClient();
                 HttpGet get = new HttpGet(imgPath);
@@ -178,18 +170,10 @@ public class CraneActivity extends Activity {
             }
 
             @Override
-            protected void onPostExecute(Food result) {
-                mAdapter.notifyDataSetChanged();
+            protected void onPostExecute(Crane result) {
+                craneAdapter.notifyDataSetChanged();
             }
         }
     }
-}
 
-//  @Override
-//    protected void onCreate(Bundle savedInstanceState) {
-//        super.onCreate(savedInstanceState);
-//        setTitle("起重机监测统计");
-//        setContentView(R.layout.activity_crane);//主窗体
-//
-//
-//    }
+}

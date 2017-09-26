@@ -6,25 +6,25 @@
     android:weightSum="1">
 
     <ImageView
-        android:id="@+id/iv_img"
+        android:id="@+id/iv_img0"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="5px" />
 
     <TextView
-        android:id="@+id/tv_name"
+        android:id="@+id/tv_1"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="当前区域：河南洛阳" />
 
     <TextView
-        android:id="@+id/tv_desc"
+        android:id="@+id/tv_2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="IDSN:OO5A（近10次运行信息）" />
+        android:text="IDSN（数量）" />
 
     <ListView
-        android:id="@+id/lv"
+        android:id="@+id/lv2"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
 </LinearLayout>

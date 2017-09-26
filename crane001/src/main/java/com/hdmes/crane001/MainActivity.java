@@ -6,11 +6,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Handler;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -48,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private List<Food> data = new ArrayList<Food>();
     private MyAdapter mAdapter;
     private ProgressDialog pd;
+    private ProgressDialog progressDialog;
     private String Stated;
     private String strTmp;
     private String strTmp2;
@@ -64,6 +67,8 @@ public class MainActivity extends AppCompatActivity {
             switch (msg.what) {
                 case 1:
                     //Toast.makeText(MainActivity.this, "toast", Toast.LENGTH_SHORT).show();
+                    progressDialog.setMessage("用户名或密码错误");
+                    progressDialog.show();
                     if (toast != null) {
                         toast.cancel();
                         toast = Toast.makeText(getApplicationContext(), "用户名或密码错误!", Toast.LENGTH_SHORT);
@@ -71,6 +76,10 @@ public class MainActivity extends AppCompatActivity {
                         toast = Toast.makeText(getApplicationContext(), "用户名或密码错误!", Toast.LENGTH_SHORT);
                     }
                     toast.show();
+                    break;
+                case 0:
+                    //progressDialog.setMessage("登录成功..稍后!");
+                    //progressDialog.show();
                     break;
             }
             super.handleMessage(msg);
@@ -87,7 +96,15 @@ public class MainActivity extends AppCompatActivity {
             //与上次点击返回键时刻作差
             if ((System.currentTimeMillis() - mExitTime) > 2000) {
                 //大于2000ms则认为是误操作，使用Toast进行提示
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                if (toast != null) {
+                    toast.cancel();
+                    toast = Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT);
+
+                } else {
+                    toast = Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT);
+
+                }
+                toast.show();
                 //并记录下本次点击“返回键”的时刻，以便下次进行判断
                 mExitTime = System.currentTimeMillis();
             } else {
@@ -101,6 +118,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * UI 线程 Main
+     *
      * @param savedInstanceState
      */
     @Override
@@ -116,62 +134,80 @@ public class MainActivity extends AppCompatActivity {
         //执行相关操作
         //netStatus = true;
         //Toast.makeText(context, "网络已连接！", Toast.LENGTH_SHORT).show();
+        progressDialog = new ProgressDialog(this);
+
+        progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progressDialog.setIcon(R.drawable.loading_bg);
+        progressDialog.setTitle("登录提示");
+        progressDialog.setMessage("Loading...");
+        //progressDialog.setCancelable(false);
+        // 方式一：new Dialog
+        final ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        //dialog.show();
+        //ProgressDialog dialog2 = ProgressDialog.show(this, "提示", "正在登陆中");
+        //progressDialog.show();
         //获取按钮资源
         Button btn1 = (Button) findViewById(R.id.button_login);
         btn1.setOnClickListener(new Button.OnClickListener() {//设置监听
             public void onClick(View v) {
-                EditText Ev1 = (EditText) findViewById(R.id.editText_username);
-                EditText Ev2 = (EditText) findViewById(R.id.editText2_userpass);
-                strTmp = Ev1.getText().toString();
-                strTmp2 = Ev2.getText().toString();
-                if (TextUtils.isEmpty(strTmp) & TextUtils.isEmpty(strTmp2)) {
-                    //toast.setText("请输入用户名！");
-                    if (toast != null) {
-                        toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "请输入用户名和密码", Toast.LENGTH_SHORT);
-                    } else {
-                        toast = Toast.makeText(getApplicationContext(), "请输入用户名和密码", Toast.LENGTH_SHORT);
-                    }
-                    toast.show();
-                } else if (TextUtils.isEmpty(strTmp)) {
-                    if (toast != null) {
-                        toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
-                    } else {
-                        toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
-                    }
-                    toast.show();
-                } else if (TextUtils.isEmpty(strTmp2)) {
-                    if (toast != null) {
-                        toast.cancel();
-                        toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
-                    } else {
-                        toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
-                    }
-                    toast.show();
-                } else {
-                    if (internet || wifi) {
-                        netStatus = true;
-                        lv = (ListView) findViewById(R.id.lv);
-                        pd = new ProgressDialog(MainActivity.this);
-                        mAdapter = new MyAdapter(MainActivity.this, data);
-                        //lv.setAdapter(mAdapter);
-                        new MainActivity.MyFoodTask().execute();
-                    } else {
-                        if (toast != null) {
-                            toast.cancel();
-                            toast = Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_SHORT);
-                        } else {
-                            toast = Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_SHORT);
-                        }
-                        toast.show();
-                    }
-                }
+                stmpLogin();
             }
         });
         //} else {
         //Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_LONG).show();
         //}
+
+    }
+
+    private void stmpLogin() {
+        EditText Ev1 = (EditText) findViewById(R.id.editText_username);
+        EditText Ev2 = (EditText) findViewById(R.id.editText2_userpass);
+        strTmp = Ev1.getText().toString();
+        strTmp2 = Ev2.getText().toString();
+        if (TextUtils.isEmpty(strTmp) & TextUtils.isEmpty(strTmp2)) {
+            //toast.setText("请输入用户名！");
+            if (toast != null) {
+                toast.cancel();
+                toast = Toast.makeText(getApplicationContext(), "请输入用户名和密码", Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(getApplicationContext(), "请输入用户名和密码", Toast.LENGTH_SHORT);
+            }
+            toast.show();
+        } else if (TextUtils.isEmpty(strTmp)) {
+            if (toast != null) {
+                toast.cancel();
+                toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(getApplicationContext(), "请输入用户名", Toast.LENGTH_SHORT);
+            }
+            toast.show();
+        } else if (TextUtils.isEmpty(strTmp2)) {
+            if (toast != null) {
+                toast.cancel();
+                toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
+            } else {
+                toast = Toast.makeText(getApplicationContext(), "请输入密码", Toast.LENGTH_SHORT);
+            }
+            toast.show();
+        } else {
+            if (internet || wifi) {
+                netStatus = true;
+                lv = (ListView) findViewById(R.id.lv);
+                pd = new ProgressDialog(MainActivity.this);
+                mAdapter = new MyAdapter(MainActivity.this, data);
+                //lv.setAdapter(mAdapter);
+                new MainActivity.MyFoodTask().execute();
+            } else {
+                if (toast != null) {
+                    toast.cancel();
+                    toast = Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_SHORT);
+                } else {
+                    toast = Toast.makeText(context, "亲，网络异常，请检查网络连接！", Toast.LENGTH_SHORT);
+                }
+                toast.show();
+            }
+        }
 
     }
 
@@ -186,12 +222,14 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 通过 web Http 获取服务器数据  到Map集合
+         *
          * @param params
          * @return
          */
         @Override
         protected Map<String, Object> doInBackground(String... params) {
-            String path = "http://192.168.0.188:8098/UserAccount/UserLogin_Me";
+
+            String path = "http://192.168.0.188:8098/UserAccount/UserLogin_Me";//本地服务器请求地址
             /*         新 URL 请求方法
             HttpURLConnection connection = null;
             try {
@@ -220,19 +258,53 @@ public class MainActivity extends AppCompatActivity {
                     connection.disconnect();
                 }
             }*/
-            HttpClient client = new DefaultHttpClient();
-            HttpGet get = new HttpGet(path);
-            HttpPost hpost = new HttpPost(path);
+            HttpClient httpClient = new DefaultHttpClient();
+            HttpGet httpGet = new HttpGet(path);
+            HttpPost httpPost = new HttpPost(path);
             BasicNameValuePair UserName = new BasicNameValuePair("UserName", strTmp);
             BasicNameValuePair UserPassword = new BasicNameValuePair("UserPassword", strTmp2);
+
+            //获取屏幕尺寸
+            DisplayMetrics dm = new DisplayMetrics();
+            getWindowManager().getDefaultDisplay().getMetrics(dm);
+            int width = dm.widthPixels;
+            int height = dm.heightPixels;
+            int dens = dm.densityDpi;
+            double wi = (double) width / (double) dens;
+            double hi = (double) height / (double) dens;
+            double x = Math.pow(wi, 2);
+            double y = Math.pow(hi, 2);
+            //double screenInches = Math.sqrt(x + y);
+            //当前系统版本号
+            int currentapiVersion = android.os.Build.VERSION.SDK_INT;//23
+            String ver_sys = "android-" + Build.VERSION.RELEASE + "-->" + currentapiVersion;
+
+            // 设备厂商
+            String brand = Build.BRAND;
+            // 设备名称
+            String model = Build.MODEL;
+            BasicNameValuePair device_factory = new BasicNameValuePair("device_factory", brand);
+            BasicNameValuePair device_name = new BasicNameValuePair("device_name", model);
+            BasicNameValuePair device_wi = new BasicNameValuePair("wi", Integer.toString(width));
+            BasicNameValuePair device_hi = new BasicNameValuePair("hi", Integer.toString(height));
+            BasicNameValuePair device_dens = new BasicNameValuePair("dens", Integer.toString(dens));
+            BasicNameValuePair device_and = new BasicNameValuePair("andsys", ver_sys);
+            //POST提交参数放到List 里
             List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
             //把BasicNameValuePair放入集合中
             parameters.add(UserName);
             parameters.add(UserPassword);
-            try {
+            parameters.add(device_factory);
+            parameters.add(device_name);
+            parameters.add(device_wi);
+            parameters.add(device_hi);
+            parameters.add(device_dens);
+            parameters.add(device_and);
+
+            try {//将List传到后台Web API（C# 服务器）
                 UrlEncodedFormEntity entity1 = new UrlEncodedFormEntity(parameters, "utf-8");
-                hpost.setEntity(entity1);
-                HttpResponse resp = client.execute(hpost);//请求耗时操作 网络
+                httpPost.setEntity(entity1);
+                HttpResponse resp = httpClient.execute(httpPost);//请求耗时操作 网络
                 //HttpResponse resp = client.execute(get);
                 int rp = resp.getStatusLine().getStatusCode();
                 if (resp.getStatusLine().getStatusCode() == 200) {
@@ -268,6 +340,8 @@ public class MainActivity extends AppCompatActivity {
 
         /**
          * 将服务器返回的数据进行Json解析
+         * 登录信息
+         *
          * @param json
          * @return
          * @throws Exception
@@ -296,7 +370,7 @@ public class MainActivity extends AppCompatActivity {
 
                 //子线程：通知UI线程更新UI
                 try {
-                    Thread.sleep(0);
+                    Thread.sleep(500);
                     Message msg = new Message();
                     msg.what = 1;
                     mHandler.sendMessage(msg);
